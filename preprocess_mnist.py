@@ -72,3 +72,13 @@ class RotatedMNIST(Dataset):
 
 if __name__ == "__main__":
     preprocess_mnist()
+    # Example usage
+    dataset = RotatedMNIST(file_path='mnist_rotated_train.h5')
+    print(f"Dataset size: {len(dataset)}")
+    idx = np.random.randint(0, len(dataset))
+    img, label = dataset[idx]
+    print(f"Image shape: {img.shape}, Label: {label}")
+    # Display the image (optional)
+    img = img.squeeze().numpy()
+    img = Image.fromarray((img * 255).astype(np.uint8))
+    img.show()
