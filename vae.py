@@ -26,10 +26,10 @@ class VAE(nn.Module):
             nn.Linear(latent_dim, 64 * 7 * 7),
             nn.LeakyReLU(),
             nn.Unflatten(1, (64, 7, 7)),
-            nn.ConvTranspose2d(64, 32, kernel_size=3, stride=2, padding=1),
+            nn.ConvTranspose2d(64, 32, kernel_size=3, stride=2, padding=1, output_padding=1),
             nn.BatchNorm2d(32),
             nn.LeakyReLU(),
-            nn.ConvTranspose2d(32, in_channels, kernel_size=3, stride=2, padding=1),
+            nn.ConvTranspose2d(32, in_channels, kernel_size=3, stride=2, padding=1, output_padding=1),
             nn.Sigmoid()
         )   
         
@@ -58,11 +58,11 @@ class VAE(nn.Module):
         reconstruction_loss = F.mse_loss(recon, x)
         
         kl_divergence_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
-        kl_weight = 0.1
+        kl_weight = 0.0025
         
         loss = reconstruction_loss + kl_weight * kl_divergence_loss
 
-        return {'loss': loss, 'Reconstruction_Loss':reconstruction_loss.detach(), 'KLD':-kl_divergence_loss.detach()}
+        return {'loss': loss, 'Reconstruction_Loss':reconstruction_loss.detach(), 'KLD':kl_divergence_loss.detach()}
     
     def generate(self, x):
         return self.forward(x)[0]
